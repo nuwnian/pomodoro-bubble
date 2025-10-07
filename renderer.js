@@ -203,20 +203,25 @@ class PomodoroTimer {
         this.isMinimized = !this.isMinimized;
         
         if (this.isMinimized) {
-            this.bubble.classList.add('minimized');
-            this.minimizedIcon.style.display = 'block';
-        } else {
-            // Hide content temporarily during expansion
+            // Hide content first, then minimize
             const timerDisplay = this.bubble.querySelector('#timerDisplay');
             const controls = this.bubble.querySelector('#controls');
             timerDisplay.style.opacity = '0';
             controls.style.opacity = '0';
             
-            this.bubble.classList.remove('minimized');
+            setTimeout(() => {
+                this.bubble.classList.add('minimized');
+                this.minimizedIcon.style.display = 'block';
+            }, 150);
+        } else {
+            // Hide minimized icon immediately, then expand
             this.minimizedIcon.style.display = 'none';
+            this.bubble.classList.remove('minimized');
             
             // Smooth fade-in of content after expansion
             setTimeout(() => {
+                const timerDisplay = this.bubble.querySelector('#timerDisplay');
+                const controls = this.bubble.querySelector('#controls');
                 timerDisplay.style.transition = 'opacity 0.3s ease';
                 controls.style.transition = 'opacity 0.3s ease';
                 timerDisplay.style.opacity = '1';
