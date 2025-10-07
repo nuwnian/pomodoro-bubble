@@ -1,3 +1,8 @@
+// Show desktop-wide break popup
+function showBreakPopup() {
+    const { ipcRenderer } = require('electron');
+    ipcRenderer.send('show-break-popup');
+}
 class PomodoroTimer {
     constructor() {
         this.timeLeft = 25 * 60; // 25 minutes in seconds
@@ -147,6 +152,7 @@ class PomodoroTimer {
         this.updateButton();
         this.bubble.classList.add('completed');
         this.playChime();
+        showBreakPopup();
         // Remove completed animation after it finishes
         setTimeout(() => {
             this.bubble.classList.remove('completed');
@@ -200,8 +206,22 @@ class PomodoroTimer {
             this.bubble.classList.add('minimized');
             this.minimizedIcon.style.display = 'block';
         } else {
+            // Hide content temporarily during expansion
+            const timerDisplay = this.bubble.querySelector('#timerDisplay');
+            const controls = this.bubble.querySelector('#controls');
+            timerDisplay.style.opacity = '0';
+            controls.style.opacity = '0';
+            
             this.bubble.classList.remove('minimized');
             this.minimizedIcon.style.display = 'none';
+            
+            // Smooth fade-in of content after expansion
+            setTimeout(() => {
+                timerDisplay.style.transition = 'opacity 0.3s ease';
+                controls.style.transition = 'opacity 0.3s ease';
+                timerDisplay.style.opacity = '1';
+                controls.style.opacity = '1';
+            }, 150);
         }
     }
 }
